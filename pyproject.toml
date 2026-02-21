@@ -1,0 +1,16 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ghsec"
+version = "0.1.0"
+description = "CLI tool to fetch, display, and manage GitHub security alerts"
+requires-python = ">=3.10"
+dependencies = ["rich"]
+
+[project.scripts]
+ghsec = "ghsec.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ghsec"]
