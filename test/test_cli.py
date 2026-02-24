@@ -173,7 +173,7 @@ class TestCmdDismiss:
         args.func(args)
         mock_update.assert_called_once_with("owner/repo", "code", 1, {
             "state": "dismissed",
-            "dismissed_reason": "wont_fix",
+            "dismissed_reason": "won't fix",
         })
         mock_success.assert_called_once()
 

@@ -20,6 +20,16 @@ DISMISS_REASONS = {
     "secret": ["false_positive", "wont_fix", "revoked", "used_in_tests"],
 }
 
+# Code scanning API expects spaced/punctuated reason values;
+# Dependabot and secret scanning use underscore values as-is.
+_REASON_API_MAP = {
+    "code": {
+        "false_positive": "false positive",
+        "wont_fix": "won't fix",
+        "used_in_tests": "used in tests",
+    },
+}
+
 # API field names for dismissal differ per alert type
 DISMISS_FIELD_MAP = {
     "code": ("state", "dismissed", "dismissed_reason", "dismissed_comment"),
@@ -93,7 +103,8 @@ def cmd_dismiss(args: argparse.Namespace) -> None:
         sys.exit(1)
 
     state_field, state_val, reason_field, comment_field = DISMISS_FIELD_MAP[atype]
-    fields = {state_field: state_val, reason_field: args.reason}
+    api_reason = _REASON_API_MAP.get(atype, {}).get(args.reason, args.reason)
+    fields = {state_field: state_val, reason_field: api_reason}
     if args.comment:
         fields[comment_field] = args.comment
 
