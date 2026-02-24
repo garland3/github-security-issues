@@ -11,8 +11,8 @@ err_console = Console(stderr=True)
 
 
 def print_json(data: dict | list) -> None:
-    """Print raw JSON output."""
-    console.print(json.dumps(data, indent=2))
+    """Print raw JSON output (bypasses Rich to avoid ANSI in machine-readable output)."""
+    print(json.dumps(data, indent=2))
 
 
 def print_error(msg: str) -> None:
@@ -121,7 +121,8 @@ def print_alert_detail(alert: dict, alert_type: str) -> None:
         pkg = vuln.get("package", {})
         rows.append(("Package", f"{pkg.get('ecosystem', '')}:{pkg.get('name', '')}"))
         rows.append(("Vulnerable Range", vuln.get("vulnerable_version_range", "")))
-        rows.append(("Patched Version", vuln.get("first_patched_version", {}).get("identifier", "")))
+        fpv = vuln.get("first_patched_version")
+        rows.append(("Patched Version", fpv.get("identifier", "") if fpv else ""))
 
     elif alert_type == "secret":
         rows.append(("Secret Type", alert.get("secret_type_display_name", alert.get("secret_type", ""))))

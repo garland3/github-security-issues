@@ -12,5 +12,8 @@ dependencies = ["rich"]
 [project.scripts]
 ghsec = "ghsec.cli:main"
 
+[dependency-groups]
+dev = ["pytest"]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/ghsec"]
