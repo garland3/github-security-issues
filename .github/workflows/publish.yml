@@ -5,38 +5,51 @@ on:
     branches: [main]
 
 permissions:
+  contents: write
   id-token: write
 
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
+    # Skip if the last commit was an auto version bump
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    environment: pypi
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
+      - name: Bump patch version
+        run: |
+          python3 -c "
+          import re, pathlib
+          p = pathlib.Path('pyproject.toml')
+          text = p.read_text()
+          m = re.search(r'version\s*=\s*\"(\d+)\.(\d+)\.(\d+)\"', text)
+          major, minor, patch = int(m.group(1)), int(m.group(2)), int(m.group(3))
+          old = f'{major}.{minor}.{patch}'
+          new = f'{major}.{minor}.{patch + 1}'
+          p.write_text(text.replace(f'version = \"{old}\"', f'version = \"{new}\"', 1))
+          print(f'{old} -> {new}')
+          "
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          VERSION=$(python3 -c "import re, pathlib; m=re.search(r'version\s*=\s*\"(.+?)\"', pathlib.Path('pyproject.toml').read_text()); print(m.group(1))")
+          git add pyproject.toml
+          git commit -m "Bump version to ${VERSION} [skip ci]"
+          git push
+
       - name: Build package
         run: uv build
-
-      - name: Upload dist artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-  publish:
-    needs: build
-    runs-on: ubuntu-latest
-    environment: pypi
-    permissions:
-      id-token: write
-    steps:
-      - name: Download dist artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
