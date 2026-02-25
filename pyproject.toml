@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ghsec"
-version = "0.1.1"
+version = "0.1.2"
 description = "CLI tool to fetch, display, and manage GitHub security alerts"
 readme = "README.md"
 requires-python = ">=3.10"
