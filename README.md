@@ -1,5 +1,9 @@
 # ghsec — GitHub Security Alerts CLI
 
+[![CI](https://github.com/garland3/github-security-issues/actions/workflows/ci.yml/badge.svg)](https://github.com/garland3/github-security-issues/actions/workflows/ci.yml)
+[![Publish to PyPI](https://github.com/garland3/github-security-issues/actions/workflows/publish.yml/badge.svg)](https://github.com/garland3/github-security-issues/actions/workflows/publish.yml)
+[![PyPI version](https://img.shields.io/pypi/v/ghsec)](https://pypi.org/project/ghsec/)
+
 A command-line tool that wraps the `gh` CLI to fetch, display, and manage GitHub security alerts (CodeQL/code scanning, Dependabot, secret scanning).
 
 ## Prerequisites
